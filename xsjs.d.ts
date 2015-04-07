@@ -239,9 +239,21 @@ declare module xsjs.jobs {
 }
 
 declare module xsjs.net.http {
-  interface Client {
-// todo
-  }
+    interface Client {
+          getResponse(): xsjs.web.WebResponse;
+          request(request: xsjs.net.http.Request, destination: xsjs.net.http.Destination);
+          request(request: xsjs.net.http.Request, url: string, proxy?: string);
+          request(WebMethod: xsjs.net.http, url: string, proxy?: string);
+          setTimeout(timeout: number);
+    }
+
+    interface Destination {
+        // todo
+    }
+
+    interface Request extends xsjs.web.WebRequest {
+
+    }
 }
 
 declare module xsjs.net {
@@ -250,6 +262,12 @@ declare module xsjs.net {
         Client: {
             new (): xsjs.net.http.Client;
         };
+
+        Request: {
+            new (): xsjs.net.http.Request;
+        };
+
+        readDestination(package: string, objectName: string): xsjs.net.http.Destination;
 
         OPTIONS: number;
         GET: number;
@@ -319,9 +337,9 @@ declare module xsjs.security {
     }
 
     interface xsjs {
-      AntiVirus: {
-          new (profile?: string): AntiVirus;
-      };
+        AntiVirus: {
+            new (profile?: string): AntiVirus;
+        };
     }
 }
 
@@ -341,7 +359,9 @@ declare module xsjs.util {
 
 declare module xsjs.web {
     interface Body {
-        // todo
+        asArrayBuffer(): ArrayBuffer;
+        asString(): string;
+        asWebRequest(): xsjs.web.WebRequest;
     }
 
     interface EntityList {
@@ -399,4 +419,3 @@ declare module xsjs.web {
 }
 
 declare var $: xsjs.xsjs;
-//export = xsjs;
