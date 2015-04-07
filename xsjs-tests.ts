@@ -240,3 +240,36 @@ switch (aCmd) {
         $.response.status = $.net.http.INTERNAL_SERVER_ERROR;
         $.response.setBody('Invalid Command');
 }
+
+// create client
+var client = new $.net.http.Client();
+
+// where and what to send
+var dest = $.net.http.readDestination("testApp", "myDestination");
+var request = new $.net.http.Request($.net.http.GET, "/"); // new Request(METHOD, PATH)
+                                                           // the PATH will be prefixed by destination's pathPrefix, e.g. "/search?" on the request
+
+// send the request and synchronously get the response
+client.request(request, dest);
+var response2 = client.getResponse();
+
+
+// get all the cookies and headers from the response
+var co = [], he = [];
+for(var c in response2.cookies) {
+    co.push(response2.cookies[c]);
+}
+
+for(var c in response2.headers) {
+     he.push(response2.headers[c]);
+}
+
+// get the body
+if(!response2.body)
+    body = "";
+else
+    body = response2.body.asString();
+
+// send the response as JSON
+$.response.contentType = "application/json";
+$.response.setBody(JSON.stringify({"status": response2.status, "cookies": co, "headers": he, "body": body}));
