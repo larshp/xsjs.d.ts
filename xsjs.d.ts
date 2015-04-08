@@ -240,11 +240,11 @@ declare module xsjs.jobs {
 
 declare module xsjs.net.http {
     interface Client {
-          getResponse(): xsjs.web.WebResponse;
-          request(request: xsjs.net.http.Request, destination: xsjs.net.http.Destination);
-          request(request: xsjs.net.http.Request, url: string, proxy?: string);
-          request(WebMethod: xsjs.net.http, url: string, proxy?: string);
-          setTimeout(timeout: number);
+        getResponse(): xsjs.web.WebResponse;
+        request(request: xsjs.net.http.Request, destination: xsjs.net.http.Destination);
+        request(request: xsjs.net.http.Request, url: string, proxy?: string);
+        request(WebMethod: xsjs.net.http, url: string, proxy?: string);
+        setTimeout(timeout: number);
     }
 
     interface Destination {
@@ -351,9 +351,43 @@ declare module xsjs.trace {
 }
 
 declare module xsjs.util {
-    // todo
+
+    interface SAXParser {
+        attlistDeclHandler: (elname: string, attname: string, att_type: string, dflt: string, isrequired: number) => void;
+        characterDataHandler: (s: string) => void;
+        commentHandler: (data: string) => void;
+        currentByteIndex: number;
+        currentColumnNumber: number;
+        currentLineNumber: number;
+        endCDataSectionHandler: () => void;
+        endDoctypeDeclHandler: () => void;
+        endElementHandler: (name: string) => void;
+        endNameSpaceDeclHandler: (prefix: string) => void;
+        entityDeclHandler: (entityName: string, is_parameter_entity: number, value: string, systemId: string, publicId: string, notationName: string) => void;
+        externalEntityRefHandler: (context: string, systemId: string, publicId: string) => void;
+        notationDeclHandler: (notationName: string, systemId: string, publicId: string) => void;
+        processingInstructionHandler:(target: string, data: string) => void;
+        startCDataSectionHandler: () => void;
+        startDoctypeDeclHandler: (doctypeName: string, sysid: string, pubid: string, has_internal_subset: number) => void;
+        startElementHandler: (name: string, atts: any) => void;
+        startNameSpaceDeclHandler: (prefix: string, uri: string) => void;
+        xmlDeclHandler: (version: string, encoding: string, standalone: number) => void;
+
+        parse(xml: string);
+        parse(xml: ArrayBuffer, encoding?: string);
+        parse(xml: xsjs.web.Body, encoding?: string);
+        reset();
+        resume();
+        stop(isResumable: boolean);
+
+    }
+
+    interface Zip {
+
+    }
+
     interface xsjs {
-        // todo
+        stringify(arrayBuffer: ArrayBuffer): string;
     }
 }
 
