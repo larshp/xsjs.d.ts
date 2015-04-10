@@ -106,7 +106,16 @@ declare module xsjs.db {
     }
 
     interface ParameterMetaData {
-        // todo
+        getParameterCount(): number;
+        getParameterMode(index: number): number;
+        getParameterName(columnIndex: number): string;
+        getParameterType(columnIndex: number): any;
+        getParameterTypeName(columnIndex: number): string;
+        getPrecision(columnIndex: number): string;
+        getScale(columnIndex: number): string;
+        hasDefault(index: number): number;
+        isNullable(index: number): number;
+        isSigned(index: number): number;
     }
 
     // todo, superclass? a lot of the methods are common?
@@ -173,7 +182,16 @@ declare module xsjs.db {
     }
 
     interface ResultSetMetaData {
-        // todo
+      getCatalogName(columnIndex: number): string;
+      getColumnCount(): number;
+      getColumnDisplaySize(columnIndex: number): number;
+      getColumnLabel(columnIndex: number): string;
+      getColumnName(columnIndex: number): string;
+      getColumnType(columnIndex: number): any;
+      getColumnTypeName(columnIndex: number): string;
+      getPrecision(columnIndex: number): number;
+      getScale(columnIndex: number): number;
+      getTableName(columnIndex: number): string;
     }
 
     interface SQLException {
@@ -320,10 +338,52 @@ declare module xsjs.net {
         HTTP_VERSION_NOT_SUPPORTED: number;
     }
 
+    interface Part {
+        TYPE_TEXT: string;
+        TYPE_ATTACHMENT: string;
+        TYPE_INLINE: string
+
+        alternative: string;
+        alternativeContentType: string;
+        contentId: string;
+        contentType: string;
+        data: any;
+        encoding: string;
+        fileName: string;
+        fileNameEncoding: string;
+        text: string;
+        type: string;
+    }
+
+    interface SendReply {
+        messageId: string;
+        finalReply: string;
+    }
+
+    interface Mail {
+        bcc: any;
+        cc: any;
+        parts: any;
+        sender: any;
+        subject: string;
+        subjectEncoding: string;
+
+        send(): SendReply;
+
+        Part: {
+            new (input?: any): xsjs.net.Part;
+        };
+    }
+
     // todo
     interface xsjs {
         status: number;
         http: http;
+
+        Mail: {
+            new (input?: any): xsjs.net.Mail;
+        };
+
         // todo
     }
 }
@@ -331,15 +391,27 @@ declare module xsjs.net {
 declare module xsjs.security {
 
     interface AntiVirus {
-        constructor(profile?: string);
-
         scan(data: any, objectName?: string);
+    }
+
+    interface Store {
+        read(parameters): string;
+        readForUser(parameters): string;
+        remove(parameters);
+        removeForUser(parameters);
+        store(parameters);
+        storeForUser(parameters);
     }
 
     interface xsjs {
         AntiVirus: {
             new (profile?: string): AntiVirus;
         };
+
+        Store: {
+            new (secureStoreFile: string): Store;
+        };
+
     }
 }
 
@@ -366,7 +438,7 @@ declare module xsjs.util {
         entityDeclHandler: (entityName: string, is_parameter_entity: number, value: string, systemId: string, publicId: string, notationName: string) => void;
         externalEntityRefHandler: (context: string, systemId: string, publicId: string) => void;
         notationDeclHandler: (notationName: string, systemId: string, publicId: string) => void;
-        processingInstructionHandler:(target: string, data: string) => void;
+        processingInstructionHandler: (target: string, data: string) => void;
         startCDataSectionHandler: () => void;
         startDoctypeDeclHandler: (doctypeName: string, sysid: string, pubid: string, has_internal_subset: number) => void;
         startElementHandler: (name: string, atts: any) => void;
@@ -383,11 +455,19 @@ declare module xsjs.util {
     }
 
     interface Zip {
-
+        asArrayBuffer(): ArrayBuffer;
     }
 
     interface xsjs {
         stringify(arrayBuffer: ArrayBuffer): string;
+
+        SAXParser: {
+            new (): SAXParser;
+        };
+
+        Zip: {
+            new (source?: any, index?: number, password?: string): Zip;
+        };
     }
 }
 
