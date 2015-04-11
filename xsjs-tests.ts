@@ -185,34 +185,34 @@ var dest = $.net.http.readDestination("testApp", "myDestination");
 var response2 = client.getResponse();
 
 var co = [], he = [];
-for(var c in response2.cookies) {
+for (var c in response2.cookies) {
     co.push(response2.cookies[c]);
 }
 
-for(var c in response2.headers) {
-     he.push(response2.headers[c]);
+for (var c in response2.headers) {
+    he.push(response2.headers[c]);
 }
 
-if(!response2.body)
+if (!response2.body)
     body = "";
 else
     body = response2.body.asString();
 
 $.response.contentType = "application/json";
-$.response.setBody(JSON.stringify({"status": response2.status, "cookies": co, "headers": he, "body": body}));
+$.response.setBody(JSON.stringify({ "status": response2.status, "cookies": co, "headers": he, "body": body }));
 
 
 var mail = new $.net.Mail();
 mail.subject = "About what the email is."
 mail.subjectEncoding = "UTF-8";
-mail.sender = {address: "from@sap.com"};
-mail.cc = [{name: "Cc1", address: "cc1@recepient.com"}, {address: "cc2@recepient.com"}];
+mail.sender = { address: "from@sap.com" };
+mail.cc = [{ name: "Cc1", address: "cc1@recepient.com" }, { address: "cc2@recepient.com" }];
 
 var response = "";
 
 try {
     var returnValue = mail.send();
-} catch(error) {
+} catch (error) {
     response = "Error occurred:" + error.message;
 }
 response = "MessageId = " + returnValue.messageId + ", final reply = " + returnValue.finalReply;
@@ -222,3 +222,48 @@ $.response.contentType = "text/html";
 $.response.setBody(response);
 
 var foosdf = $.net.Mail.Part.TYPE_TEXT;
+
+var connection = $.hdb.getConnection({ "isolationLevel": $.hdb.isolation.REPEATABLE_READ, "sqlcc": "package::mysqlccfile" });
+
+var connection = $.hdb.getConnection();
+connection.executeUpdate('UPDATE "DB_EXAMPLE"."ICECREAM" SET QUANTITY=? WHERE FLAVOR=?', 9, 'CHOCOLATE');
+connection.commit();
+
+var result = connection.executeQuery('SELECT FLAVOR, PRICE, QUANTITY FROM "DB_EXAMPLE"."ICECREAM"');
+var iterator = result.getIterator();
+var totalPrice = 0;
+while (iterator.next()) {
+    var currentRow = iterator.value();
+    totalPrice += currentRow['PRICE'];
+}
+
+var myjob = new $.jobs.Job({uri:"my.xsjob", sqlcc:"sqlcc/otheruser.xssqlcc"});
+
+myjob.activate({
+   user: "JOBUSER",
+   password: "MyPassWd1"
+});
+
+myjob.configure({
+   user: "JOBUSER",
+   password: "MyPassWd1",
+   locale : "EN",
+   status: true,
+   start_time: {
+       value: "25 01 2014 11:57:19",
+       format: "DD MM YYYY HH:MI:SS"
+   },
+   end_time: null
+});
+
+var jobLogArray = myjob.schedules[i].logs.jobLog;
+var newestLogEntry = myjob.schedules[i].logs.jobLog[0];
+var newestStatus = myjob.schedules[i].logs.jobLog[0].status;
+
+$.trace.debug("asdf");
+var md5 = $.security.crypto.md5("sdf");
+
+var TM = new $.db.textmining.Session({
+    referenceTable: "SYSTEM:TMDOCUMENTS",
+    referenceColumn: "FILECONTENT"
+});
