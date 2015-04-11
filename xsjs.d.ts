@@ -1,7 +1,7 @@
 // Type definitions for SAP HANA XS Engine
 // Project: http://help.sap.com/hana/SAP_HANA_XS_JavaScript_API_Reference_en/
 // Definitions by: Lars Hvam <https://github.com/larshp>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
+// Definitions: https://github.com/larshp/xsjs.d.ts
 
 declare module xsjs {
 
@@ -182,20 +182,20 @@ declare module xsjs.db {
     }
 
     interface ResultSetMetaData {
-      getCatalogName(columnIndex: number): string;
-      getColumnCount(): number;
-      getColumnDisplaySize(columnIndex: number): number;
-      getColumnLabel(columnIndex: number): string;
-      getColumnName(columnIndex: number): string;
-      getColumnType(columnIndex: number): any;
-      getColumnTypeName(columnIndex: number): string;
-      getPrecision(columnIndex: number): number;
-      getScale(columnIndex: number): number;
-      getTableName(columnIndex: number): string;
+        getCatalogName(columnIndex: number): string;
+        getColumnCount(): number;
+        getColumnDisplaySize(columnIndex: number): number;
+        getColumnLabel(columnIndex: number): string;
+        getColumnName(columnIndex: number): string;
+        getColumnType(columnIndex: number): any;
+        getColumnTypeName(columnIndex: number): string;
+        getPrecision(columnIndex: number): number;
+        getScale(columnIndex: number): number;
+        getTableName(columnIndex: number): string;
     }
 
     interface SQLException {
-        // todo
+        code: number;
     }
 
     interface isolation {
@@ -239,20 +239,109 @@ declare module xsjs.db {
 
         getConnection(sqlcc?: string, isolationLevel?: isolation): xsjs.db.Connection;
         getConnection(configurationObject?): xsjs.db.Connection;
+
+        textmining: xsjs.db.textmining.xsjs;
     }
 }
 
-declare module xsjs.hdb {
-    // todo
-    interface xsjs {
+declare module xsjs.db.textmining {
+
+    interface Session {
         // todo
+    }
+
+    interface xsjs {
+        Session: {
+            new (p: { referenceTable: string, referenceColumn: string }): Session;
+        };
+    }
+
+}
+
+declare module xsjs.hdb {
+
+    interface Connection {
+        close();
+        commit();
+        executeQuery(query: string, ...arguments: any[]): ResultSet;
+        executeUpdate(statement: string, ...arguments: any[]): number; // todo
+        loadProcedure(schema: string, procedure: string): (any?) => any;
+        rollback();
+        setAutoCommit(enable: number);
+    }
+
+    interface ProcedureResult {
+        // todo
+    }
+
+    interface ResultSet {
+        length: number;
+
+        getIterator(): ResultSetIterator;
+    }
+
+    interface Isolation {
+        READ_COMMITTED: number;
+        REPEATABLE_READ: number;
+        SERIALIZABLE: number;
+    }
+
+    interface ResultSetIterator {
+        next(): boolean;
+        value(): any;
+    }
+
+    interface xsjs {
+        isolation: Isolation;
+
+        getConnection(options?: any): Connection;
     }
 }
 
 declare module xsjs.jobs {
-    // todo
+
+    interface Job {
+        schedules: JobSchedules;
+
+        activate(credentials: { user: string, password: string });
+        configure(config: { user: string, password: string, locale: string, status: boolean, start_time: Date, end_time: Date });
+        configure(config: { user: string, password: string, locale: string, status: boolean, start_time: { value: string, format?: string }, end_time: { value: string, format?: string } });
+        deactivate(credentials: { user: string, password: string });
+    }
+
+    interface JobLogObject {
+        planned_time: Date;
+        status: string;
+        error_message: string;
+        started_at: Date;
+        finished_at: Date;
+        host: string;
+        port: string;
+        action: string;
+        user: string;
+        locale: string;
+    }
+
+    interface JobLog {
+        jobLogs: Array<JobLogObject>;
+    }
+
+    interface JobSchedules {
+        active: boolean;
+        description: string;
+        parameter: string;
+        xscron: string
+        logs: JobLog;
+
+        add(parameters: any): number;
+        delete(parameters: any): boolean;
+    }
+
     interface xsjs {
-        // todo
+
+        Job: {
+            new (constructJob: { uri: string, sqlcc?: string }): Job;
+        };
     }
 }
 
@@ -382,9 +471,23 @@ declare module xsjs.net {
 
         Mail: {
             new (input?: any): xsjs.net.Mail;
+            Part: Part;
         };
 
         // todo
+    }
+}
+
+declare module xsjs.security.crypto {
+    interface xsjs {
+        md5(data: string, key?: string): ArrayBuffer;
+        md5(data: ArrayBuffer, key?: string): ArrayBuffer;
+
+        sha1(data: string, key?: string): ArrayBuffer;
+        sha1(data: ArrayBuffer, key?: string): ArrayBuffer;
+
+        sha256(data: string, key?: string): ArrayBuffer;
+        sha256(data: ArrayBuffer, key?: string): ArrayBuffer;
     }
 }
 
@@ -412,13 +515,18 @@ declare module xsjs.security {
             new (secureStoreFile: string): Store;
         };
 
+        crypto: xsjs.security.crypto.xsjs;
     }
 }
 
 declare module xsjs.trace {
-    // todo
+
     interface xsjs {
-        // todo
+        debug(message: string);
+        error(message: string);
+        fatal(message: string);
+        info(message: string);
+        warning(message: string);
     }
 }
 
@@ -468,7 +576,36 @@ declare module xsjs.util {
         Zip: {
             new (source?: any, index?: number, password?: string): Zip;
         };
+
+        codec: xsjs.util.codec.xsjs;
+        compression: xsjs.util.compression.xsjs;
     }
+}
+
+declare module xsjs.util.compression {
+
+    interface xsjs {
+        gunzip(source: ArrayBuffer): ArrayBuffer;
+        gunzip(source: xsjs.web.Body): ArrayBuffer;
+
+        gzip(source: ArrayBuffer): ArrayBuffer;
+        gzip(source: string): ArrayBuffer;
+        gzip(source: xsjs.web.Body): ArrayBuffer;
+    }
+
+}
+
+declare module xsjs.util.codec {
+
+    interface xsjs {
+        decodeBase64(base64Data: string): ArrayBuffer;
+        decodeHex(hexData: string): ArrayBuffer;
+        encodeBase64(data: string): string;
+        encodeBase64(data: ArrayBuffer): string;
+        encodeHex(data: string): string;
+        encodeHex(data: ArrayBuffer): string;
+    }
+
 }
 
 declare module xsjs.web {
